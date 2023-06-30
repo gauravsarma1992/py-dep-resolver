@@ -1,49 +1,12 @@
 import os
 import traceback
-from io import BytesIO
-from tokenize import tokenize, NAME
 
+from dependency_resolver_io import DependencyResolverIO
+from tokenizer import Tokenizer
 from import_analyzer import ModuleHelper, FileVisitor
 
 
-RESOLVED_LIST=set()
-
-class Tokenizer:
-    def __init__(self, *args, **kwargs):
-        self.code: str = kwargs["code"]
-
-    def tokenize(self) -> set[str]:
-        tokens = tokenize(BytesIO(self.code.encode('utf-8')).readline)
-        token_set = set()
-        for toknum, tokval, _, _, _ in tokens:
-            if toknum == NAME:
-                token_set.add(tokval)
-
-        return token_set
-
-
-class DependencyResolverIO:
-    def __init__(self, *args, **kwargs):
-        self.output_folder: str = kwargs.get("output_folder", "/tmp/core")
-        self.resolve_for_obj: str = kwargs["resolve_for_obj"]
-
-        self._pre_process()
-
-    def _pre_process(self) -> None:
-        self._clean_folder(self.output_folder)
-        self._mkdir(self.output_folder)
-
-    def _clean_folder(self, folder_path: str) -> None:
-        import shutil
-        if os.path.isdir(folder_path):
-            shutil.rmtree(folder_path)
-
-    def _mkdir(self, folder_path: str) -> None:
-        os.makedirs(folder_path, exist_ok=True)
-
-    def _resolve_obj(self) -> [str, str]:
-        file_path, object_name = self.resolve_for_obj.split("::")
-        return file_path, object_name
+RESOLVED_LIST = set()
 
 
 class DependencyResolverManager:
@@ -101,7 +64,6 @@ class DependencyResolverManager:
             self._find_object_code(self.file_path, self.object_name), imported_objects
         )
         print(f"Completed resolving object - {self.resolve_for_obj} | Depth - {self.resolve_count}")
-
 
 
 if __name__ == "__main__":

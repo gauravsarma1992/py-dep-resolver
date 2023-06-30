@@ -3,7 +3,7 @@ import traceback
 
 from dependency_resolver_io import DependencyResolverIO
 from tokenizer import Tokenizer
-from import_analyzer import ModuleHelper, FileVisitor
+from file_visitor import ModuleHelper, FileVisitor
 
 
 RESOLVED_LIST = set()
